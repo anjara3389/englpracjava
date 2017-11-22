@@ -31,10 +31,13 @@ public class DBConnection {
     }
 
     public void executeUpdateQuery(String query) throws SQLException, Exception {
-        connectDB();
-        preparedStatement = connection.prepareStatement(query);
-        preparedStatement.executeUpdate();
-        close();
+        try {
+            connectDB();
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.executeUpdate();
+        } finally {
+            close();
+        }
     }
 
     public ArrayList<Object[]> executeSelectQuery(String query) throws SQLException, Exception {
@@ -48,7 +51,6 @@ public class DBConnection {
         while (resultSet.next()) {
             Object[] obj = new Object[numCol];
             int i = 0;
-
             while (i < numCol) {
                 obj[i] = resultSet.getObject(i + 1);
                 i++;
