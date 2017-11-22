@@ -16,7 +16,7 @@ public class FrmCategories extends javax.swing.JFrame {
         try {
             update(); //Llamamos al método que rellena la tabla con los datos de la base de datos
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, ex.getMessage());
+            JOptionPane.showMessageDialog(null, !ex.getMessage().equals("") ? ex.getMessage() : ex);
             Logger.getLogger(Logger.GLOBAL_LOGGER_NAME).log(Level.SEVERE, "", ex);
         }
     }
@@ -33,16 +33,13 @@ public class FrmCategories extends javax.swing.JFrame {
             model.addRow(row);
         }
         tblCategories.setModel(model);
-        tblCategories.getColumnModel().getColumn(0).setPreferredWidth(0);//esconde la primera columna
-        tblCategories.getColumnModel().getColumn(0).setMaxWidth(0);
-        tblCategories.getColumnModel().getColumn(0).setMinWidth(0);
-        tblCategories.getTableHeader().getColumnModel().getColumn(0).setMaxWidth(0);
-        tblCategories.getTableHeader().getColumnModel().getColumn(0).setMinWidth(0);
+        hideFirstColumn();
+
         tblCategories.updateUI();//Actualiza la tabla
 
     }
 
-    public Object getValueAt(int rowIndex, int columnIndex) {
+    private Object getValueAt(int rowIndex, int columnIndex) {
         switch (columnIndex) {
             case 0:
                 return categs.get(rowIndex).getId();
@@ -51,6 +48,14 @@ public class FrmCategories extends javax.swing.JFrame {
             default:
                 throw new ArrayIndexOutOfBoundsException();
         }
+    }
+
+    //esconde la primera columna de la tabla 
+    private void hideFirstColumn() {
+        tblCategories.getColumnModel().getColumn(0).setMaxWidth(0);
+        tblCategories.getColumnModel().getColumn(0).setMinWidth(0);
+        tblCategories.getTableHeader().getColumnModel().getColumn(0).setMaxWidth(0);
+        tblCategories.getTableHeader().getColumnModel().getColumn(0).setMinWidth(0);
     }
 
     @SuppressWarnings("unchecked")
@@ -157,7 +162,7 @@ public class FrmCategories extends javax.swing.JFrame {
             new FrmCategory(this, true, null).setVisible(true);
             update();
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, ex);
+            JOptionPane.showMessageDialog(this, !ex.getMessage().equals("") ? ex.getMessage() : ex);
             Logger.getLogger(Logger.GLOBAL_LOGGER_NAME).log(Level.SEVERE, "", ex);
         }
     }//GEN-LAST:event_btnNewActionPerformed
@@ -170,7 +175,7 @@ public class FrmCategories extends javax.swing.JFrame {
             new FrmCategory(this, true, (Integer) getValueAt(tblCategories.getSelectedRow(), 0)).setVisible(true);
             update();
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage());
+            JOptionPane.showMessageDialog(this, !ex.getMessage().equals("") ? ex.getMessage() : ex);
             Logger.getLogger(Logger.GLOBAL_LOGGER_NAME).log(Level.SEVERE, "", ex);
         }
     }//GEN-LAST:event_btnEditActionPerformed
@@ -186,48 +191,11 @@ public class FrmCategories extends javax.swing.JFrame {
                 update();
             }
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage());
+            JOptionPane.showMessageDialog(this, !ex.getMessage().equals("") ? ex.getMessage() : ex);
             Logger.getLogger(Logger.GLOBAL_LOGGER_NAME).log(Level.SEVERE, "", ex);
         }
     }//GEN-LAST:event_btnDeleteActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-
-                }
-            }
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(FrmCategories.class
-                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
-
-        }
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> {
-            new FrmCategories().setVisible(true);
-        });
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnDelete;

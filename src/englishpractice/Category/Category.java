@@ -1,15 +1,12 @@
 package englishpractice.Category;
 
 import englishpractice.DBConnection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class Category {
 
-    private ResultSet resultSet = null;
-    private DBConnection dBConnection;
-
+    private final DBConnection dBConnection;
     public int id;
     public String name;
 
@@ -24,42 +21,49 @@ public class Category {
     public Category(int id, String name) throws Exception {
         this.id = id;
         this.name = name;
-        dBConnection = new DBConnection();
-        dBConnection.readDataBase();
+        this.dBConnection = new DBConnection();
     }
 
     public Category() throws Exception {
-        dBConnection = new DBConnection();
-        dBConnection.readDataBase();
+        this.dBConnection = new DBConnection();
     }
 
     public ArrayList<Category> fillTable() throws SQLException, Exception {
+        ArrayList<Object[]> data = dBConnection.executeSelectQuery("SELECT id,name FROM category");
         ArrayList<Category> categs = new ArrayList();
-        resultSet = dBConnection.executeSelectQuery("SELECT id,name FROM category");
-        while (resultSet.next()) {
-            Category categ = new Category(resultSet.getInt("id"), resultSet.getString("name"));
-            categs.add(categ);
+
+        for (int i = 0; i < data.size(); i++) {
+            categs.add(new Category((int) data.get(i)[0], (String) data.get(i)[1]));
         }
         return categs;
     }
 
     public Category select(int id) throws SQLException, Exception {
-        resultSet = dBConnection.executeSelectQuery("SELECT id,name FROM category WHERE id=" + id);
-        if (resultSet.first()) {
-            return new Category(resultSet.getInt("id"), resultSet.getString("name"));
-        }
-        return null;
+        ArrayList<Object[]> data = dBConnection.executeSelectQuery("SELECT id,name FROM category WHERE id=" + id);
+        return new Category((int) data.get(0)[0], (String) data.get(0)[1]);
     }
 
-    public void insert(Category c) throws SQLException {
+    public void insert(Category c) throws SQLException, Exception {
+        if (!isValidated(c)) {
+            throw new Exception("Ya exíste una categoría con ese nombre");
+        }
         dBConnection.executeUpdateQuery("INSERT INTO category(name) VALUES ('" + c.name + "')");
     }
 
-    public void update(Category c) throws SQLException {
+    public void update(Category c) throws SQLException, Exception {
+        if (!isValidated(c)) {
+            throw new Exception("Ya exíste una categoría con ese nombre");
+        }
+
         dBConnection.executeUpdateQuery("UPDATE category SET name='" + c.name + "' WHERE id=" + c.id);
     }
 
-    public void delete(int id) throws SQLException {
+    public void delete(int id) throws SQLException, Exception {
         dBConnection.executeUpdateQuery("DELETE FROM category WHERE id=" + id);
+    }
+
+    public boolean isValidated(Category c) throws Exception {
+        ArrayList<Object[]> data = dBConnection.executeSelectQuery("SELECT COUNT(*)>0 FROM category WHERE name like '" + c.name + "' AND id<>" + c.id);
+        return (Long) data.get(0)[0] == 0;
     }
 }
