@@ -1,6 +1,6 @@
-package englishpractice.Category;
+package Category;
 
-import englishpractice.DBConnection;
+import database.DBConnection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -67,4 +67,10 @@ public class Category {
         ArrayList<Object[]> data = dBConnection.executeSelectQuery("SELECT COUNT(*)>0 FROM category WHERE name like '" + c.name + "' AND id<>" + c.id);
         return (Long) data.get(0)[0] == 0;
     }
+
+    @Override
+    public String toString() {
+        return "Category{" + "id=" + id + ", name=" + name + '}';
+    }
+    
 }

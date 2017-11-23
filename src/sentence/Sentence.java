@@ -1,6 +1,6 @@
 package sentence;
 
-import englishpractice.DBConnection;
+import database.DBConnection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 

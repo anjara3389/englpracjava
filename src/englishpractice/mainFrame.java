@@ -1,6 +1,10 @@
 package englishpractice;
 
-import englishpractice.Category.FrmCategories;
+import Category.FrmCategories;
+import game.FrmGame;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 public class mainFrame extends javax.swing.JFrame {
 
@@ -56,7 +60,12 @@ public class mainFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void optNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_optNewActionPerformed
-        // TODO add your handling code here:
+        try {
+            new FrmGame(this,true).setVisible(true);
+        } catch (Exception ex) {
+            Logger.getLogger(Logger.GLOBAL_LOGGER_NAME).log(Level.SEVERE, "", ex);
+            JOptionPane.showMessageDialog(this, !ex.getMessage().equals("") ? ex.getMessage() : ex);
+        }
     }//GEN-LAST:event_optNewActionPerformed
 
     private void optCategoriesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_optCategoriesActionPerformed
