@@ -9,6 +9,7 @@ public class Category {
     private final DBConnection dBConnection;
     public int id;
     public String name;
+    public boolean active;
 
     public int getId() {
         return id;
@@ -18,7 +19,7 @@ public class Category {
         return name;
     }
 
-    public Category(int id, String name) throws Exception {
+    public Category(int id, String name, boolean active) throws Exception {
         this.id = id;
         this.name = name;
         this.dBConnection = new DBConnection();
@@ -29,18 +30,18 @@ public class Category {
     }
 
     public ArrayList<Category> fillTable() throws SQLException, Exception {
-        ArrayList<Object[]> data = dBConnection.executeSelectQuery("SELECT id,name FROM category");
+        ArrayList<Object[]> data = dBConnection.executeSelectQuery("SELECT id,name,active FROM category WHERE active");
         ArrayList<Category> categs = new ArrayList();
 
         for (int i = 0; i < data.size(); i++) {
-            categs.add(new Category((int) data.get(i)[0], (String) data.get(i)[1]));
+            categs.add(new Category((int) data.get(i)[0], (String) data.get(i)[1], (int) data.get(i)[2] == 1));
         }
         return categs;
     }
 
     public Category select(int id) throws SQLException, Exception {
-        ArrayList<Object[]> data = dBConnection.executeSelectQuery("SELECT id,name FROM category WHERE id=" + id);
-        return new Category((int) data.get(0)[0], (String) data.get(0)[1]);
+        ArrayList<Object[]> data = dBConnection.executeSelectQuery("SELECT id,name,active FROM category WHERE id=" + id);
+        return new Category((int) data.get(0)[0], (String) data.get(0)[1], (int) data.get(0)[2] == 1);
     }
 
     public void insert(Category c) throws SQLException, Exception {
@@ -59,7 +60,7 @@ public class Category {
     }
 
     public void delete(int id) throws SQLException, Exception {
-        dBConnection.executeUpdateQuery("DELETE FROM category WHERE id=" + id);
+        dBConnection.executeUpdateQuery("UPDATE category SET active=false WHERE id=" + id);
     }
 
     public boolean isValidated(Category c) throws Exception {

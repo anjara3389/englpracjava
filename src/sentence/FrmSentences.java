@@ -1,19 +1,20 @@
-package englishpractice.Category;
+package sentence;
 
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import sentence.FrmSentences;
 
-public class FrmCategories extends javax.swing.JFrame {
+public class FrmSentences extends javax.swing.JFrame {
 
     private DefaultTableModel model;
-    private ArrayList<Category> categs;
+    private ArrayList<Sentence> sents;
+    private int catId;
 
-    public FrmCategories() {
+    public FrmSentences(int catId) {
         initComponents();
+        this.catId = catId;
         try {
             update(); //Llamamos al método que rellena la tabla con los datos de la base de datos
         } catch (Exception ex) {
@@ -25,38 +26,33 @@ public class FrmCategories extends javax.swing.JFrame {
     private void update() throws Exception {
         model = new DefaultTableModel();
         model.addColumn("Id"); //Añadimos las columnas a la tabla
-        model.addColumn("Nombre");
-        categs = new Category().fillTable();
-        for (int i = 0; i < categs.size(); i++) {
-            Object[] row = new Object[2];
-            row[0] = (int) (categs.get(i).id);
-            row[1] = categs.get(i).name;
+        model.addColumn("Inglés");
+         model.addColumn("Español");
+        sents = new Sentence().fillTable(catId);
+        for (int i = 0; i < sents.size(); i++) {
+            Object[] row = new Object[3];
+            row[0] = (int) (sents.get(i).id);
+            row[1] = sents.get(i).english;
+            row[2] = sents.get(i).spanish;
             model.addRow(row);
         }
-        tblCategories.setModel(model);
-        hideFirstColumn();
+        tblSentences.setModel(model);
+        hideFirstColumns();
 
-        tblCategories.updateUI();//Actualiza la tabla
+        tblSentences.updateUI();//Actualiza la tabla
 
     }
 
-    private Object getValueAt(int rowIndex, int columnIndex) {
-        switch (columnIndex) {
-            case 0:
-                return categs.get(rowIndex).getId();
-            case 1:
-                return categs.get(rowIndex).getName();
-            default:
-                throw new ArrayIndexOutOfBoundsException();
-        }
+    private Object getValueAt(int rowIndex) {
+        return sents.get(rowIndex).id;
     }
 
     //esconde la primera columna de la tabla 
-    private void hideFirstColumn() {
-        tblCategories.getColumnModel().getColumn(0).setMaxWidth(0);
-        tblCategories.getColumnModel().getColumn(0).setMinWidth(0);
-        tblCategories.getTableHeader().getColumnModel().getColumn(0).setMaxWidth(0);
-        tblCategories.getTableHeader().getColumnModel().getColumn(0).setMinWidth(0);
+    private void hideFirstColumns() {
+        tblSentences.getColumnModel().getColumn(0).setMaxWidth(0);
+        tblSentences.getColumnModel().getColumn(0).setMinWidth(0);
+        tblSentences.getTableHeader().getColumnModel().getColumn(0).setMaxWidth(0);
+        tblSentences.getTableHeader().getColumnModel().getColumn(0).setMinWidth(0);
     }
 
     @SuppressWarnings("unchecked")
@@ -64,39 +60,46 @@ public class FrmCategories extends javax.swing.JFrame {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        tblCategories = new javax.swing.JTable();
+        tblSentences = new javax.swing.JTable();
         btnNew = new javax.swing.JButton();
         btnEdit = new javax.swing.JButton();
         btnDelete = new javax.swing.JButton();
-        btnSentences = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        tblCategories.setModel(new javax.swing.table.DefaultTableModel(
+        tblSentences.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null}
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
             },
             new String [] {
-                "Id", "Nombre"
+                "Id", "Inglés", "Español"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
             }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
         });
-        jScrollPane1.setViewportView(tblCategories);
-        if (tblCategories.getColumnModel().getColumnCount() > 0) {
-            tblCategories.getColumnModel().getColumn(0).setResizable(false);
-            tblCategories.getColumnModel().getColumn(0).setPreferredWidth(0);
-            tblCategories.getColumnModel().getColumn(1).setResizable(false);
-            tblCategories.getColumnModel().getColumn(1).setPreferredWidth(500);
+        jScrollPane1.setViewportView(tblSentences);
+        if (tblSentences.getColumnModel().getColumnCount() > 0) {
+            tblSentences.getColumnModel().getColumn(0).setResizable(false);
+            tblSentences.getColumnModel().getColumn(0).setPreferredWidth(0);
+            tblSentences.getColumnModel().getColumn(1).setResizable(false);
+            tblSentences.getColumnModel().getColumn(1).setPreferredWidth(500);
+            tblSentences.getColumnModel().getColumn(2).setResizable(false);
         }
 
         btnNew.setText("Nueva");
@@ -120,13 +123,6 @@ public class FrmCategories extends javax.swing.JFrame {
             }
         });
 
-        btnSentences.setText("Listado");
-        btnSentences.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSentencesActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -141,8 +137,6 @@ public class FrmCategories extends javax.swing.JFrame {
                         .addComponent(btnEdit)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnDelete)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnSentences)
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -153,8 +147,7 @@ public class FrmCategories extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnNew)
                     .addComponent(btnEdit)
-                    .addComponent(btnDelete)
-                    .addComponent(btnSentences))
+                    .addComponent(btnDelete))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 438, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -165,7 +158,7 @@ public class FrmCategories extends javax.swing.JFrame {
 
     private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
         try {
-            new FrmCategory(this, true, null).setVisible(true);
+            new FrmSentence(this, true, catId, null).setVisible(true);
             update();
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, !ex.getMessage().equals("") ? ex.getMessage() : ex);
@@ -175,10 +168,10 @@ public class FrmCategories extends javax.swing.JFrame {
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
         try {
-            if (tblCategories.getSelectedRow() == -1) {
+            if (tblSentences.getSelectedRow() == -1) {
                 throw new Exception("Seleccione un elemento de la lista");
             }
-            new FrmCategory(this, true, (Integer) getValueAt(tblCategories.getSelectedRow(), 0)).setVisible(true);
+            new FrmSentence(this, true, null, (Integer) getValueAt(tblSentences.getSelectedRow())).setVisible(true);
             update();
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, !ex.getMessage().equals("") ? ex.getMessage() : ex);
@@ -188,12 +181,12 @@ public class FrmCategories extends javax.swing.JFrame {
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
         try {
-            if (tblCategories.getSelectedRow() == -1) {
+            if (tblSentences.getSelectedRow() == -1) {
                 throw new Exception("Seleccione un elemento de la lista");
             }
             int answ = JOptionPane.showConfirmDialog(this, "¿Desea eliminar éste elemento?", "Eliminación", JOptionPane.YES_NO_OPTION);
             if (answ == JOptionPane.YES_OPTION) {
-                new Category().delete((Integer) getValueAt(tblCategories.getSelectedRow(), 0));
+                new Sentence().delete((Integer) getValueAt(tblSentences.getSelectedRow()));
                 update();
             }
         } catch (Exception ex) {
@@ -202,25 +195,12 @@ public class FrmCategories extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnDeleteActionPerformed
 
-    private void btnSentencesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSentencesActionPerformed
-        try {
-            if (tblCategories.getSelectedRow() == -1) {
-                throw new Exception("Seleccione un elemento de la lista");
-            }
-            new FrmSentences((Integer) getValueAt(tblCategories.getSelectedRow(), 0)).setVisible(true);
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, !ex.getMessage().equals("") ? ex.getMessage() : ex);
-            Logger.getLogger(Logger.GLOBAL_LOGGER_NAME).log(Level.SEVERE, "", ex);
-        }
-    }//GEN-LAST:event_btnSentencesActionPerformed
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnEdit;
     private javax.swing.JButton btnNew;
-    private javax.swing.JButton btnSentences;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable tblCategories;
+    private javax.swing.JTable tblSentences;
     // End of variables declaration//GEN-END:variables
 }

@@ -15,13 +15,13 @@ public class DBConnection {
     }
 
     public void executeUpdateQuery(String query) throws SQLException, Exception {
-        try (Connection connection = connectDB(); PreparedStatement preparedStatement = connection.prepareStatement(query)) {//Las variables que se declaran aquí sirven dentro del try. Una vez ejecutado lo de adentro del try el cierra esos recursos que se usaron
+        try (Connection connection = connectDB(); PreparedStatement preparedStatement = connection.prepareStatement(query)) {//Las variables que se declaran aquí sirven dentro del try. Una vez ejecutado lo de adentro del try el cierra esos recursos(conexión,preparedStatement) que se usaron. 
             preparedStatement.executeUpdate();
         }
     }
 
     public ArrayList<Object[]> executeSelectQuery(String query) throws SQLException, Exception {
-        try (Connection connection = connectDB(); PreparedStatement preparedStatement = connection.prepareStatement(query); ResultSet resultSet = preparedStatement.executeQuery()) { //Las variables que se declaran aquí sirven dentro del try. Una vez ejecutado lo de adentro del try el cierra esos recursos que se usaron
+        try (Connection connection = connectDB(); PreparedStatement preparedStatement = connection.prepareStatement(query); ResultSet resultSet = preparedStatement.executeQuery()) { //Las variables que se declaran aquí sirven dentro del try. Una vez ejecutado lo de adentro del try el cierra esos recursos(conexión,preparedStatement,resultset) que se usaron
 
             int numCol = resultSet.getMetaData().getColumnCount();
             ArrayList data = new ArrayList();
